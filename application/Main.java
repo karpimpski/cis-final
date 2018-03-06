@@ -39,7 +39,6 @@ public class Main extends Application
         menu(file);
 
         // text area
-        System.out.println(FileHelper.readFile(file));
         area = new TextArea(FileHelper.readFile(file));
         area.prefWidthProperty().bind(root.widthProperty());
         area.prefHeightProperty().bind(root.heightProperty());
@@ -99,7 +98,8 @@ public class Main extends Application
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Select a text file");
         File selectedFile = chooser.showOpenDialog(stage);
-        home(selectedFile);
+        if(selectedFile != null)
+            home(selectedFile);
     }
 
     /*
@@ -121,8 +121,11 @@ public class Main extends Application
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save As");
         File selectedFile = chooser.showSaveDialog(stage);
-        FileHelper.saveFile(selectedFile, area.getText());
-        home(selectedFile);
+        if(selectedFile != null)
+        {
+            FileHelper.saveFile(selectedFile, area.getText());
+            home(selectedFile);
+        }
     }
 
     public static void main(String[] args)
