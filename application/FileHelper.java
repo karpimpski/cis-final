@@ -22,9 +22,7 @@ public class FileHelper
             // read each line of the file and add it to the result
             String line;
             while ((line = reader.readLine()) != null)
-            {
                 result += line + "\n";
-            }
             
             reader.close();
         } catch (Exception ex)
@@ -42,9 +40,7 @@ public class FileHelper
         try
         {
             FileWriter fileWriter = new FileWriter(file);
-            String[] lines = content.split("\n");
-            for(String line : lines)
-                fileWriter.write(line + "\n");
+            fileWriter.write(content);
             fileWriter.close();
         }
         catch(Exception ex)
