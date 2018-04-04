@@ -46,8 +46,8 @@
 	-fx-font-family: Arial;
 	-fx-alignment: center;
 	-fx-border-width: 0 1px 0 0;
-	-fx-border-color: black;
-	-fx-padding: 0 8px 0 8px;
+	-fx-border-color: white;
+	-fx-text-alignment: center;
 }
 
 #area .lineno .text {

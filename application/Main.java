@@ -48,17 +48,18 @@ public class Main extends Application
         area.setId("area");
         area.prefWidthProperty().bind(root.widthProperty());
         area.prefHeightProperty().bind(root.heightProperty());
-        
+
         // create context menu
         ContextMenu contextMenu = new ContextMenu();
         addContextItems(contextMenu);
-        
-        area.setOnMouseClicked(e -> {
-            if(e.getButton() == MouseButton.SECONDARY) {
+
+        area.setOnMouseClicked(e ->
+        {
+            if (e.getButton() == MouseButton.SECONDARY)
+            {
                 contextMenu.show(area, e.getScreenX(), e.getScreenY());
-                System.out.println(area.getSelectedText());
-            }
-            else if(e.getButton() == MouseButton.PRIMARY) {
+            } else if (e.getButton() == MouseButton.PRIMARY)
+            {
                 contextMenu.hide();
             }
         });
@@ -77,10 +78,12 @@ public class Main extends Application
         stage.setScene(scene);
         stage.show();
     }
-    
-    public void addContextItems(ContextMenu contextMenu) {
+
+    public void addContextItems(ContextMenu contextMenu)
+    {
         MenuItem addKeywordItem = new MenuItem("Add Keyword");
-        addKeywordItem.setOnAction(e -> {
+        addKeywordItem.setOnAction(e ->
+        {
             SyntaxHighlighter.addKeyword(area.getSelectedText());
         });
         contextMenu.getItems().addAll(addKeywordItem);
