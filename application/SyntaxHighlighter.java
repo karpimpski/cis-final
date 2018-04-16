@@ -46,30 +46,56 @@ public class SyntaxHighlighter
     {
         return FileHelper.readFile(new File("rules/" + extension + "/keywords.txt")).split(",");
     }
+    
+    public String getExtension()
+    {
+        return extension;
+    }
+    
+    public String singleLineCommentStart()
+    {
+        return FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt"));
+    }
+    
+    public String multiLineCommentStart()
+    {
+        return FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_start.txt"));
+    }
+    
+    public String multiLineCommentEnd()
+    {
+        return FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_end.txt"));
+    }
+    
+    public void updateCommentPatterns(String singleLineStart, String multiLineStart, String multiLineEnd)
+    {
+        FileHelper.saveFile(new File("rules/" + extension + "/comments/singleline.txt"), singleLineStart);
+        FileHelper.saveFile(new File("rules/" + extension + "/comments/multiline_start.txt"), multiLineStart);
+        FileHelper.saveFile(new File("rules/" + extension + "/comments/multiline_end.txt"), multiLineEnd);
+    }
 
     public String singleLineCommentPattern()
     {
-        return FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt"));
+        return FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt")) + "[^\\n]*";
     }
 
     public String multiLineCommentPattern()
     {
-        return FileHelper.readFile(new File("rules/" + extension + "/comments/multiline.txt"));
+        String start = FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_start.txt"));
+        String end = FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_end.txt"));
+        try
+        {
+            return start + "((.|\n)*)" + end;
+        }
+        catch(Exception ex)
+        {
+            return "";
+        }
     }
 
     public String commentPattern()
     {
         return singleLineCommentPattern() + "|" + multiLineCommentPattern();
-    }
-
-    public void updateSingleLine(String content)
-    {
-        FileHelper.saveFile(new File("rules/" + extension + "/comments/singleline.txt"), content);
-    }
-
-    public void updateMultiLine(String content)
-    {
-        FileHelper.saveFile(new File("rules/" + extension + "/comments/multiline.txt"), content);
     }
 
     public void addKeyword(String keyword)

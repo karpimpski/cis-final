@@ -196,23 +196,27 @@ public class Main extends Application
         Stage popupStage = new Stage();
         GridPane popupRoot = new GridPane();
 
-        Label singleLineLabel = new Label("Single Line Pattern");
+        Label singleLineLabel = new Label("Single Line Start");
         popupRoot.add(singleLineLabel, 0, 0);
-        TextField singleLineField = new TextField(highlighter.singleLineCommentPattern());
+        TextField singleLineField = new TextField(highlighter.singleLineCommentStart());
         popupRoot.add(singleLineField, 1, 0);
 
-        Label multiLineLabel = new Label("Multi Line Pattern");
-        popupRoot.add(multiLineLabel, 0, 1);
-        TextField multiLineField = new TextField(highlighter.multiLineCommentPattern());
-        popupRoot.add(multiLineField, 1, 1);
+        Label multiLineStartLabel = new Label("Multi Line (wrapped comment) Start");
+        popupRoot.add(multiLineStartLabel, 0, 1);
+        TextField multiLineStartField = new TextField(highlighter.multiLineCommentStart());
+        popupRoot.add(multiLineStartField, 1, 1);
+        
+        Label multiLineEndLabel = new Label("Multi Line (wrapped comment) Start");
+        popupRoot.add(multiLineEndLabel, 0, 2);
+        TextField multiLineEndField = new TextField(highlighter.multiLineCommentEnd());
+        popupRoot.add(multiLineEndField, 1, 2);
 
         Button submitBtn = new Button("Save Changes");
         submitBtn.setOnAction(e ->
         {
-            highlighter.updateSingleLine(singleLineField.getText());
-            highlighter.updateMultiLine(multiLineField.getText());
+            highlighter.updateCommentPatterns(singleLineField.getText(), multiLineStartField.getText(), multiLineEndField.getText());
         });
-        popupRoot.add(submitBtn, 1, 2);
+        popupRoot.add(submitBtn, 1, 3);
 
         // create stage
         Scene scene = new Scene(popupRoot, 400, 400);
