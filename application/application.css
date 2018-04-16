@@ -1,5 +1,5 @@
 * {
-	-fx-bg-color: rgb(32,32,32);
+	-fx-bg-color: #1c1c1c;
 }
 
 .root {
@@ -21,7 +21,7 @@
 }
 
 #area .keyword {
-    -fx-fill: blue;
+    -fx-fill: #4286f4;
 }
 
 #area .operator {
@@ -33,11 +33,11 @@
 }
 
 #area .string {
-	-fx-fill: green;
+	-fx-fill: #50ff47;
 }
 
 #area .caret {
-	-fx-fill: white;
+	-fx-stroke: white;
 }
 
 #area .lineno {

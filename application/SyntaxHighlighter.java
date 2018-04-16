@@ -14,42 +14,46 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 public class SyntaxHighlighter
 {
 
-    private static final String PAREN_PATTERN = "\\(|\\)";
-    private static final String BRACE_PATTERN = "\\{|\\}";
-    private static final String BRACKET_PATTERN = "\\[|\\]";
-    private static final String SEMICOLON_PATTERN = "\\;";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
+    private final String PAREN_PATTERN = "\\(|\\)";
+    private final String BRACE_PATTERN = "\\{|\\}";
+    private final String BRACKET_PATTERN = "\\[|\\]";
+    private final String SEMICOLON_PATTERN = "\\;";
+    private final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
 
-    private static String keywordPattern = "\\b(" + String.join("|", keywords()) + ")\\b";
-    public static Pattern pattern = Pattern.compile("(?<KEYWORD>" + keywordPattern + ")" + "|(?<PAREN>" + PAREN_PATTERN
-            + ")" + "|(?<BRACE>" + BRACE_PATTERN + ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>"
-            + SEMICOLON_PATTERN + ")" + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
+    private String keywordPattern = "\\b(" + String.join("|", keywords()) + ")\\b";
+    public Pattern pattern = Pattern.compile("(?<KEYWORD>" + keywordPattern + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")"
+            + "|(?<BRACE>" + BRACE_PATTERN + ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>"
+            + SEMICOLON_PATTERN + ")" + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>" + commentPattern() + ")");
 
-    public static String[] keywords()
+    public String[] keywords()
     {
-        return FileHelper.readFile(new File("rules/java.txt")).trim().split(", ");
+        return FileHelper.readFile(new File("rules/java/keywords.txt")).split(",");
     }
 
-    public static void addKeyword(String keyword)
+    public String commentPattern()
+    {
+        return FileHelper.readFile(new File("rules/java/comments/singleline.txt")) + "|" + FileHelper.readFile(new File("rules/java/comments/multiline.txt"));
+    }
+
+    public void addKeyword(String keyword)
     {
         ArrayList<String> keywordsList = new ArrayList<String>(Arrays.asList(keywords()));
         if (!keywordsList.contains(keyword))
         {
-            File file = new File("rules/java.txt");
+            File file = new File("rules/java/keywords.txt");
             String content = FileHelper.readFile(file);
-            content += ", " + keyword;
+            content += "," + keyword;
             FileHelper.saveFile(file, content);
         }
     }
 
-    public static StyleSpans<Collection<String>> computeHighlighting(String text)
+    public StyleSpans<Collection<String>> computeHighlighting(String text)
     {
         keywordPattern = "\\b(" + String.join("|", keywords()) + ")\\b";
         pattern = Pattern.compile(
                 "(?<KEYWORD>" + keywordPattern + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")" + "|(?<BRACE>" + BRACE_PATTERN
                         + ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
-                        + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
+                        + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>" + commentPattern() + ")");
         Matcher matcher = pattern.matcher(text);
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();

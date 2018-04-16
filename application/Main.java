@@ -24,10 +24,12 @@ public class Main extends Application
     private VBox root;
     private Stage stage;
     private CodeArea area;
+    private SyntaxHighlighter highlighter;
 
     @Override
     public void start(Stage primaryStage)
     {
+        highlighter = new SyntaxHighlighter();
         stage = primaryStage;
         home(null);
     }
@@ -67,7 +69,7 @@ public class Main extends Application
         area.setParagraphGraphicFactory(LineNumberFactory.get(area));
         area.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())).subscribe(change ->
         {
-            area.setStyleSpans(0, SyntaxHighlighter.computeHighlighting(area.getText()));
+            setHighlighting();
         });
         area.replaceText(0, 0, FileHelper.readFile(file));
 
@@ -84,9 +86,19 @@ public class Main extends Application
         MenuItem addKeywordItem = new MenuItem("Add Keyword");
         addKeywordItem.setOnAction(e ->
         {
-            SyntaxHighlighter.addKeyword(area.getSelectedText());
+            addKeyword(area.getSelectedText());
         });
         contextMenu.getItems().addAll(addKeywordItem);
+    }
+    
+    public void setHighlighting()
+    {
+        area.setStyleSpans(0, highlighter.computeHighlighting(area.getText()));
+    }
+    
+    public void addKeyword(String text) 
+    {
+        highlighter.addKeyword(text);
     }
 
     /*

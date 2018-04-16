@@ -32,7 +32,7 @@ public class FileHelper
         {
             ex.printStackTrace();
         }
-        return result;
+        return result.trim();
     }
 
     /*
