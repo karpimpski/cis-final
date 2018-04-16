@@ -1,0 +1,23 @@
+* {
+	-fx-bg-color: #232323;
+	-fx-text-color: white;
+}
+
+.root {
+	-fx-background-color: -fx-bg-color;
+	-fx-text-fill: -fx-text-color;
+	-fx-alignment: center;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+
+.label {
+	-fx-text-fill: -fx-text-color;
+}
+
+.text-field {
+	-fx-background-color: -fx-bg-color;
+	-fx-text-fill: -fx-text-color;
+	-fx-border-color: -fx-text-color;
+	-fx-border-width: 0 0 1px 0;
+}

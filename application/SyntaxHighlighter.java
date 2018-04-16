@@ -29,10 +29,30 @@ public class SyntaxHighlighter
     {
         return FileHelper.readFile(new File("rules/java/keywords.txt")).split(",");
     }
-
-    public String commentPattern()
+    
+    public static String singleLineCommentPattern()
     {
-        return FileHelper.readFile(new File("rules/java/comments/singleline.txt")) + "|" + FileHelper.readFile(new File("rules/java/comments/multiline.txt"));
+        return FileHelper.readFile(new File("rules/java/comments/singleline.txt"));
+    }
+    
+    public static String multiLineCommentPattern()
+    {
+        return FileHelper.readFile(new File("rules/java/comments/multiline.txt"));
+    }
+
+    public static String commentPattern()
+    {
+        return singleLineCommentPattern() + "|" + multiLineCommentPattern();
+    }
+    
+    public static void updateSingleLine(String content)
+    {
+        FileHelper.saveFile(new File("rules/java/comments/singleline.txt"), content);
+    }
+    
+    public static void updateMultiLine(String content)
+    {
+        FileHelper.saveFile(new File("rules/java/comments/multiline.txt"), content);
     }
 
     public void addKeyword(String keyword)

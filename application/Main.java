@@ -7,14 +7,18 @@ import org.fxmisc.richtext.LineNumberFactory;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -53,18 +57,7 @@ public class Main extends Application
 
         // create context menu
         ContextMenu contextMenu = new ContextMenu();
-        addContextItems(contextMenu);
-
-        area.setOnMouseClicked(e ->
-        {
-            if (e.getButton() == MouseButton.SECONDARY)
-            {
-                contextMenu.show(area, e.getScreenX(), e.getScreenY());
-            } else if (e.getButton() == MouseButton.PRIMARY)
-            {
-                contextMenu.hide();
-            }
-        });
+        setupContext(contextMenu);
 
         area.setParagraphGraphicFactory(LineNumberFactory.get(area));
         area.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())).subscribe(change ->
@@ -81,9 +74,21 @@ public class Main extends Application
         stage.show();
     }
 
-    public void addContextItems(ContextMenu contextMenu)
+    public void setupContext(ContextMenu contextMenu)
     {
         MenuItem addKeywordItem = new MenuItem("Add Keyword");
+        
+        area.setOnMouseClicked(e ->
+        {
+            if (e.getButton() == MouseButton.SECONDARY)
+            {
+                contextMenu.show(area, e.getScreenX(), e.getScreenY());
+            } else if (e.getButton() == MouseButton.PRIMARY)
+            {
+                contextMenu.hide();
+            }
+        });
+        
         addKeywordItem.setOnAction(e ->
         {
             addKeyword(area.getSelectedText());
@@ -107,7 +112,7 @@ public class Main extends Application
     public void menu(File file)
     {
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(fileMenu(file));
+        menuBar.getMenus().addAll(fileMenu(file), settingsMenu(file));
 
         root.getChildren().add(menuBar);
     }
@@ -134,6 +139,19 @@ public class Main extends Application
 
         menu.getItems().addAll(saveItem, saveAsItem, openItem);
 
+        return menu;
+    }
+    
+    public Menu settingsMenu(File file) {
+        final Menu menu = new Menu("Settings");
+        
+        MenuItem commentPatternItem = new MenuItem("Comment Patterns");
+        
+        commentPatternItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
+        commentPatternItem.setOnAction(event -> commentPatternPopup());
+        
+        menu.getItems().addAll(commentPatternItem);
+        
         return menu;
     }
 
@@ -176,6 +194,37 @@ public class Main extends Application
         }
     }
 
+    public void commentPatternPopup() 
+    {   
+        Stage popupStage = new Stage();
+        GridPane popupRoot = new GridPane();
+        
+        Label singleLineLabel = new Label("Single Line Pattern");
+        popupRoot.add(singleLineLabel, 0, 0);
+        TextField singleLineField = new TextField(SyntaxHighlighter.singleLineCommentPattern());
+        popupRoot.add(singleLineField, 1, 0);
+        
+        Label multiLineLabel = new Label("Multi Line Pattern");
+        popupRoot.add(multiLineLabel, 0, 1);
+        TextField multiLineField = new TextField(SyntaxHighlighter.multiLineCommentPattern());
+        popupRoot.add(multiLineField, 1, 1);
+        
+        Button submitBtn = new Button("Save Changes");
+        submitBtn.setOnAction(e -> {
+            SyntaxHighlighter.updateSingleLine(singleLineField.getText());
+            SyntaxHighlighter.updateMultiLine(multiLineField.getText());
+        });
+        popupRoot.add(submitBtn, 1, 2);
+        
+        
+
+        // create stage
+        Scene scene = new Scene(popupRoot, 400, 400);
+        scene.getStylesheets().add(getClass().getResource("popup.css").toExternalForm());
+        popupStage.setTitle("Comment Patterns");
+        popupStage.setScene(scene);
+        popupStage.show();
+    }
     public static void main(String[] args)
     {
         launch(args);
