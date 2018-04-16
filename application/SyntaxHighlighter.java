@@ -13,7 +13,6 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 public class SyntaxHighlighter
 {
-
     private final String PAREN_PATTERN = "\\(|\\)";
     private final String BRACE_PATTERN = "\\{|\\}";
     private final String BRACKET_PATTERN = "\\[|\\]";
@@ -21,38 +20,56 @@ public class SyntaxHighlighter
     private final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
 
     private String keywordPattern = "\\b(" + String.join("|", keywords()) + ")\\b";
-    public Pattern pattern = Pattern.compile("(?<KEYWORD>" + keywordPattern + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")"
+    private Pattern pattern = Pattern.compile("(?<KEYWORD>" + keywordPattern + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")"
             + "|(?<BRACE>" + BRACE_PATTERN + ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>"
             + SEMICOLON_PATTERN + ")" + "|(?<STRING>" + STRING_PATTERN + ")" + "|(?<COMMENT>" + commentPattern() + ")");
 
-    public String[] keywords()
+    private String extension;
+
+    public SyntaxHighlighter(File file)
     {
-        return FileHelper.readFile(new File("rules/java/keywords.txt")).split(",");
-    }
-    
-    public static String singleLineCommentPattern()
-    {
-        return FileHelper.readFile(new File("rules/java/comments/singleline.txt"));
-    }
-    
-    public static String multiLineCommentPattern()
-    {
-        return FileHelper.readFile(new File("rules/java/comments/multiline.txt"));
+        try
+        {
+            String fileName = file.getName();
+            if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+                extension = fileName.substring(fileName.lastIndexOf(".")+1);
+            else
+                extension = "plain_text";
+        } catch (NullPointerException ex)
+        {
+            extension = "plain_text";
+        }
+
     }
 
-    public static String commentPattern()
+    public String[] keywords()
+    {
+        return FileHelper.readFile(new File("rules/" + extension + "/keywords.txt")).split(",");
+    }
+
+    public String singleLineCommentPattern()
+    {
+        return FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt"));
+    }
+
+    public String multiLineCommentPattern()
+    {
+        return FileHelper.readFile(new File("rules/" + extension + "/comments/multiline.txt"));
+    }
+
+    public String commentPattern()
     {
         return singleLineCommentPattern() + "|" + multiLineCommentPattern();
     }
-    
-    public static void updateSingleLine(String content)
+
+    public void updateSingleLine(String content)
     {
-        FileHelper.saveFile(new File("rules/java/comments/singleline.txt"), content);
+        FileHelper.saveFile(new File("rules/" + extension + "/comments/singleline.txt"), content);
     }
-    
-    public static void updateMultiLine(String content)
+
+    public void updateMultiLine(String content)
     {
-        FileHelper.saveFile(new File("rules/java/comments/multiline.txt"), content);
+        FileHelper.saveFile(new File("rules/" + extension + "/comments/multiline.txt"), content);
     }
 
     public void addKeyword(String keyword)
@@ -60,9 +77,11 @@ public class SyntaxHighlighter
         ArrayList<String> keywordsList = new ArrayList<String>(Arrays.asList(keywords()));
         if (!keywordsList.contains(keyword))
         {
-            File file = new File("rules/java/keywords.txt");
+            File file = new File("rules/" + extension + "/keywords.txt");
             String content = FileHelper.readFile(file);
-            content += "," + keyword;
+            if(!content.equals(""))
+                content += ",";
+            content += keyword;
             FileHelper.saveFile(file, content);
         }
     }

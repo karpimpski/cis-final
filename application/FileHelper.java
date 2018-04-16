@@ -2,9 +2,10 @@ package application;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FileHelper
@@ -30,7 +31,7 @@ public class FileHelper
             reader.close();
         } catch (Exception ex)
         {
-            ex.printStackTrace();
+            return "";
         }
         return result.trim();
     }
@@ -40,12 +41,16 @@ public class FileHelper
      */
     public static void saveFile(File file, String content)
     {
+        
         try
         {
-            FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write(content);
-            fileWriter.close();
-        } catch (Exception ex)
+            if(!file.exists())
+                file.getParentFile().mkdirs();
+            Files.write(Paths.get(file.getPath()), content.getBytes());
+        } catch (FileNotFoundException ex)
+        {
+            ex.printStackTrace();
+        } catch(Exception ex)
         {
             ex.printStackTrace();
         }

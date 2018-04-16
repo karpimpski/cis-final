@@ -33,7 +33,6 @@ public class Main extends Application
     @Override
     public void start(Stage primaryStage)
     {
-        highlighter = new SyntaxHighlighter();
         stage = primaryStage;
         home(null);
     }
@@ -43,6 +42,7 @@ public class Main extends Application
      */
     public void home(File file)
     {
+        highlighter = new SyntaxHighlighter(file);
         root = new VBox();
 
         // create menu buttons
@@ -77,7 +77,7 @@ public class Main extends Application
     public void setupContext(ContextMenu contextMenu)
     {
         MenuItem addKeywordItem = new MenuItem("Add Keyword");
-        
+
         area.setOnMouseClicked(e ->
         {
             if (e.getButton() == MouseButton.SECONDARY)
@@ -88,22 +88,17 @@ public class Main extends Application
                 contextMenu.hide();
             }
         });
-        
+
         addKeywordItem.setOnAction(e ->
         {
-            addKeyword(area.getSelectedText());
+            highlighter.addKeyword(area.getSelectedText());
         });
         contextMenu.getItems().addAll(addKeywordItem);
     }
-    
+
     public void setHighlighting()
     {
         area.setStyleSpans(0, highlighter.computeHighlighting(area.getText()));
-    }
-    
-    public void addKeyword(String text) 
-    {
-        highlighter.addKeyword(text);
     }
 
     /*
@@ -141,17 +136,19 @@ public class Main extends Application
 
         return menu;
     }
-    
-    public Menu settingsMenu(File file) {
+
+    public Menu settingsMenu(File file)
+    {
         final Menu menu = new Menu("Settings");
-        
+
         MenuItem commentPatternItem = new MenuItem("Comment Patterns");
-        
-        commentPatternItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
+
+        commentPatternItem.setAccelerator(
+                new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
         commentPatternItem.setOnAction(event -> commentPatternPopup());
-        
+
         menu.getItems().addAll(commentPatternItem);
-        
+
         return menu;
     }
 
@@ -194,29 +191,28 @@ public class Main extends Application
         }
     }
 
-    public void commentPatternPopup() 
-    {   
+    public void commentPatternPopup()
+    {
         Stage popupStage = new Stage();
         GridPane popupRoot = new GridPane();
-        
+
         Label singleLineLabel = new Label("Single Line Pattern");
         popupRoot.add(singleLineLabel, 0, 0);
-        TextField singleLineField = new TextField(SyntaxHighlighter.singleLineCommentPattern());
+        TextField singleLineField = new TextField(highlighter.singleLineCommentPattern());
         popupRoot.add(singleLineField, 1, 0);
-        
+
         Label multiLineLabel = new Label("Multi Line Pattern");
         popupRoot.add(multiLineLabel, 0, 1);
-        TextField multiLineField = new TextField(SyntaxHighlighter.multiLineCommentPattern());
+        TextField multiLineField = new TextField(highlighter.multiLineCommentPattern());
         popupRoot.add(multiLineField, 1, 1);
-        
+
         Button submitBtn = new Button("Save Changes");
-        submitBtn.setOnAction(e -> {
-            SyntaxHighlighter.updateSingleLine(singleLineField.getText());
-            SyntaxHighlighter.updateMultiLine(multiLineField.getText());
+        submitBtn.setOnAction(e ->
+        {
+            highlighter.updateSingleLine(singleLineField.getText());
+            highlighter.updateMultiLine(multiLineField.getText());
         });
         popupRoot.add(submitBtn, 1, 2);
-        
-        
 
         // create stage
         Scene scene = new Scene(popupRoot, 400, 400);
@@ -225,6 +221,7 @@ public class Main extends Application
         popupStage.setScene(scene);
         popupStage.show();
     }
+
     public static void main(String[] args)
     {
         launch(args);
