@@ -31,8 +31,8 @@ public class SyntaxHighlighter
         try
         {
             String fileName = file.getName();
-            if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-                extension = fileName.substring(fileName.lastIndexOf(".")+1);
+            if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+                extension = fileName.substring(fileName.lastIndexOf(".") + 1);
             else
                 extension = "plain_text";
         } catch (NullPointerException ex)
@@ -46,27 +46,27 @@ public class SyntaxHighlighter
     {
         return FileHelper.readFile(new File("rules/" + extension + "/keywords.txt")).split(",");
     }
-    
+
     public String getExtension()
     {
         return extension;
     }
-    
+
     public String singleLineCommentStart()
     {
         return FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt"));
     }
-    
+
     public String multiLineCommentStart()
     {
         return FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_start.txt"));
     }
-    
+
     public String multiLineCommentEnd()
     {
         return FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_end.txt"));
     }
-    
+
     public void updateCommentPatterns(String singleLineStart, String multiLineStart, String multiLineEnd)
     {
         FileHelper.saveFile(new File("rules/" + extension + "/comments/singleline.txt"), singleLineStart);
@@ -76,7 +76,10 @@ public class SyntaxHighlighter
 
     public String singleLineCommentPattern()
     {
-        return FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt")) + "[^\\n]*";
+        String result = FileHelper.readFile(new File("rules/" + extension + "/comments/singleline.txt"));
+        if (!result.equals(""))
+            result += "[^\\n]*";
+        return result;
     }
 
     public String multiLineCommentPattern()
@@ -85,9 +88,11 @@ public class SyntaxHighlighter
         String end = FileHelper.readFile(new File("rules/" + extension + "/comments/multiline_end.txt"));
         try
         {
-            return start + "((.|\n)*)" + end;
-        }
-        catch(Exception ex)
+            if (!(start.equals("") || end.equals("")))
+                return start + "((.|\n)*)" + end;
+            else
+                return "";
+        } catch (Exception ex)
         {
             return "";
         }
@@ -95,7 +100,11 @@ public class SyntaxHighlighter
 
     public String commentPattern()
     {
-        return singleLineCommentPattern() + "|" + multiLineCommentPattern();
+        String result = singleLineCommentPattern();
+        if (singleLineCommentPattern().equals("") && multiLineCommentPattern().equals(""))
+            result += "|";
+        result += multiLineCommentPattern();
+        return result;
     }
 
     public void addKeyword(String keyword)
@@ -105,7 +114,7 @@ public class SyntaxHighlighter
         {
             File file = new File("rules/" + extension + "/keywords.txt");
             String content = FileHelper.readFile(file);
-            if(!content.equals(""))
+            if (!content.equals(""))
                 content += ",";
             content += keyword;
             FileHelper.saveFile(file, content);
