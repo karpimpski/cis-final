@@ -101,7 +101,7 @@ public class SyntaxHighlighter
     public String commentPattern()
     {
         String result = singleLineCommentPattern();
-        if (singleLineCommentPattern().equals("") && multiLineCommentPattern().equals(""))
+        if (!(singleLineCommentPattern().equals("") || multiLineCommentPattern().equals("")))
             result += "|";
         result += multiLineCommentPattern();
         return result;
