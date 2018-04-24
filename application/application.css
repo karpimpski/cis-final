@@ -10,14 +10,20 @@
 	-fx-background-color: -fx-bg-color;
 }
 
-#area .paragraph-text {
-	-fx-padding: 0 0 0 4px;
+#area .text {
+	-fx-fill: white;
 }
 
-#area .text {
-    -fx-fill: white;
-    -fx-font-family: Arial;
-    -fx-font-size: 16px;
+#area .lineno {
+	-fx-background-color: -fx-bg-color;
+	-fx-text-fill: #BBBBBB !important;
+	-fx-fill: #BBBBBB !important;
+	-fx-border-color: white;
+	-fx-border-width: 0 1px 0 0;
+}
+
+#area .paragraph-text {
+	-fx-padding: 0 0 0 4px;
 }
 
 #area .keyword {
@@ -38,18 +44,4 @@
 
 #area .caret {
 	-fx-stroke: white;
-}
-
-#area .lineno {
-	-fx-background-color: -fx-bg-color;
-	-fx-font-style: normal;
-	-fx-font-family: Arial;
-	-fx-alignment: center;
-	-fx-border-width: 0 1px 0 0;
-	-fx-border-color: white;
-	-fx-text-alignment: center;
-}
-
-#area .lineno .text {
-	-fx-font-size: 12px;
 }

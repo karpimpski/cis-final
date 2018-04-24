@@ -4,6 +4,9 @@ import java.io.File;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.wellbehaved.event.EventPattern;
+import org.fxmisc.wellbehaved.event.InputMap;
+import org.fxmisc.wellbehaved.event.Nodes;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -17,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -50,6 +54,11 @@ public class Main extends Application
 
         // code area
         area = new CodeArea();
+        InputMap<KeyEvent> im = InputMap.consume(
+            EventPattern.keyPressed(KeyCode.TAB), 
+            e -> area.replaceSelection("    ")
+        );
+        Nodes.addInputMap(area, im);
         root.getChildren().add(area);
         area.setId("area");
         area.prefWidthProperty().bind(root.widthProperty());
@@ -64,7 +73,7 @@ public class Main extends Application
         {
             setHighlighting();
         });
-        area.replaceText(0, 0, FileHelper.readFile(file));
+        area.replaceText(0, 0, FileHelper.readFile(file).replaceAll("\t", "    "));
 
         // create stage
         Scene scene = new Scene(root, 800, 600);
