@@ -109,8 +109,12 @@ public class SyntaxHighlighter
 
     public void addKeyword(String keyword)
     {
+        Pattern pattern = Pattern.compile("\\s");
+        Matcher matcher = pattern.matcher(keyword.trim());
+        boolean found = matcher.find();
+        
         ArrayList<String> keywordsList = new ArrayList<String>(Arrays.asList(keywords()));
-        if (!keywordsList.contains(keyword))
+        if (!keywordsList.contains(keyword) && !found)
         {
             File file = new File("rules/" + extension + "/keywords.txt");
             String content = FileHelper.readFile(file);
@@ -119,6 +123,21 @@ public class SyntaxHighlighter
             content += keyword;
             FileHelper.saveFile(file, content);
         }
+    }
+    
+    public void removeKeyword(String keyword)
+    {
+        ArrayList<String> keywordsList = new ArrayList<String>(Arrays.asList(keywords()));
+        keywordsList.remove(keyword);
+        File file = new File("rules/" + extension + "/keywords.txt");
+        String content = "";
+        for(int i = 0; i < keywordsList.size(); i++) 
+        {
+            content += keywordsList.get(i);
+            if(i != keywordsList.size() - 1)
+                content += ",";
+        }
+        FileHelper.saveFile(file,  content);
     }
 
     public StyleSpans<Collection<String>> computeHighlighting(String text)

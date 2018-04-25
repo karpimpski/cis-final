@@ -87,6 +87,9 @@ public class Main extends Application
     public void setupContext(ContextMenu contextMenu)
     {
         MenuItem addKeywordItem = new MenuItem("Add Keyword");
+        MenuItem removeKeywordItem = new MenuItem("Remove Keyword");
+        addKeywordItem.setStyle("-fx-text-fill: black;");
+        removeKeywordItem.setStyle("-fx-text-fill: black;");
 
         area.setOnMouseClicked(e ->
         {
@@ -102,8 +105,15 @@ public class Main extends Application
         addKeywordItem.setOnAction(e ->
         {
             highlighter.addKeyword(area.getSelectedText());
+            setHighlighting();
         });
-        contextMenu.getItems().addAll(addKeywordItem);
+        
+        removeKeywordItem.setOnAction(e -> 
+        {
+            highlighter.removeKeyword(area.getSelectedText());
+            setHighlighting();
+        });
+        contextMenu.getItems().addAll(addKeywordItem, removeKeywordItem);
     }
 
     public void setHighlighting()
