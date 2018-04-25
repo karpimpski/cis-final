@@ -14,12 +14,16 @@
 	-fx-fill: white;
 }
 
+.virtualized-scroll-pane {
+	-fx-fill: blue;
+}
+
 #area .lineno {
 	-fx-background-color: -fx-bg-color;
-	-fx-text-fill: #BBBBBB !important;
-	-fx-fill: #BBBBBB !important;
+	-fx-text-fill: #BBBBBB;
 	-fx-border-color: white;
 	-fx-border-width: 0 1px 0 0;
+	-fx-font-family: 'monospace';
 }
 
 #area .paragraph-text {

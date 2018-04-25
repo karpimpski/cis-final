@@ -33,6 +33,7 @@ public class Main extends Application
     private Stage stage;
     private CodeArea area;
     private SyntaxHighlighter highlighter;
+    private String tabString = "    ";
 
     @Override
     public void start(Stage primaryStage)
@@ -56,7 +57,7 @@ public class Main extends Application
         area = new CodeArea();
         InputMap<KeyEvent> im = InputMap.consume(
             EventPattern.keyPressed(KeyCode.TAB), 
-            e -> area.replaceSelection("    ")
+            e -> area.replaceSelection(tabString)
         );
         Nodes.addInputMap(area, im);
         root.getChildren().add(area);
@@ -73,7 +74,7 @@ public class Main extends Application
         {
             setHighlighting();
         });
-        area.replaceText(0, 0, FileHelper.readFile(file).replaceAll("\t", "    "));
+        area.replaceText(0, 0, FileHelper.readFile(file).replaceAll("\t", tabString));
 
         // create stage
         Scene scene = new Scene(root, 800, 600);
